@@ -1,8 +1,6 @@
 // @ts-check
 
 class Especie {
-  /** @readonly @type {string} */
-  especie;
   /** @readonly @type {number} */
   tamanho;
   /** @readonly @type {Set<string>} */
@@ -18,29 +16,22 @@ class Especie {
   // ao invés de copiar os objetos
   /** @readonly */
   static especies = {
-    LEAO: new Especie("LEAO", 3, ["savana"], condicaoCarnivoro),
-    LEOPARDO: new Especie("LEOPARDO", 2, ["savana"], condicaoCarnivoro),
-    CROCODILO: new Especie("CROCODILO", 3, ["rio"], condicaoCarnivoro),
-    MACACO: new Especie("MACACO", 1, ["savana", "floresta"], condicaoMacaco),
-    GAZELA: new Especie("GAZELA", 2, ["savana"]),
-    HIPOPOTAMO: new Especie(
-      "HIPOPOTAMO",
-      4,
-      ["savana", "rio"],
-      condicaoHipopotamo,
-    ),
+    LEAO: new Especie(3, ["savana"], condicaoCarnivoro),
+    LEOPARDO: new Especie(2, ["savana"], condicaoCarnivoro),
+    CROCODILO: new Especie(3, ["rio"], condicaoCarnivoro),
+    MACACO: new Especie(1, ["savana", "floresta"], condicaoMacaco),
+    GAZELA: new Especie(2, ["savana"]),
+    HIPOPOTAMO: new Especie(4, ["savana", "rio"], condicaoHipopotamo),
   };
 
   /** Cria uma nova espécie
    * @constructor
-   * @param {string} especie - nome da espécie
    * @param {number} tamanho - tamanho da espécie
    * @param {string[]} biomas - lista de biomas do recinto
    * @param {(recinto: Recinto) => boolean} condicaoComfortavel - condições necessárias para o animal estar comfortável em um recinto
    */
   // eslint-disable-next-line no-unused-vars
-  constructor(especie, tamanho, biomas, condicaoComfortavel = (r) => true) {
-    this.especie = especie;
+  constructor(tamanho, biomas, condicaoComfortavel = (r) => true) {
     this.tamanho = tamanho;
     this.biomas = new Set(biomas);
     this.#condicaoComfortavel = condicaoComfortavel;
@@ -162,20 +153,6 @@ class Recinto {
     return this.tamanhoOcupado() > this.tamanhoTotal();
   }
 
-  /**
-   * Verifica se é possível adicionar um animal no recinto
-   * @param {Especie} especie
-   * @param {number} numero
-   * @returns {boolean} se animal pode ser adicionado no recinto
-   */
-  cabeAnimal(especie, numero) {
-    if (this.adicionarAnimal(especie, numero)) {
-      this.removerAnimal(especie, numero);
-      return true;
-    } else {
-      return false;
-    }
-  }
   /**
    * Tenta adicionar animais no recinto,
    * falha se algum animal não estiver comfortável ou recinto ficar lotado
