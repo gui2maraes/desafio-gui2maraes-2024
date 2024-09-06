@@ -161,6 +161,21 @@ class Recinto {
   lotado() {
     return this.tamanhoOcupado() > this.tamanhoTotal();
   }
+
+  /**
+   * Verifica se é possível adicionar um animal no recinto
+   * @param {Especie} especie
+   * @param {number} numero
+   * @returns {boolean} se animal pode ser adicionado no recinto
+   */
+  cabeAnimal(especie, numero) {
+    if (this.adicionarAnimal(especie, numero)) {
+      this.removerAnimal(especie, numero);
+      return true;
+    } else {
+      return false;
+    }
+  }
   /**
    * Tenta adicionar animais no recinto,
    * falha se algum animal não estiver comfortável ou recinto ficar lotado
@@ -172,8 +187,7 @@ class Recinto {
     if (numero < 1) {
       return false;
     }
-    const _numeroAtual = this.#especies.get(especie);
-    const numeroAtual = _numeroAtual === undefined ? 0 : _numeroAtual;
+    const numeroAtual = this.#especies.get(especie) ?? 0;
     this.#especies.set(especie, numero + numeroAtual);
     if (!this.habitavel()) {
       this.removerAnimal(especie, numero);
@@ -214,7 +228,42 @@ class RecintosZoo {
       [5, new Recinto(9, ["savana"], [[Especie.especies.LEAO, 1]])],
     ]);
   }
-  analisaRecintos(animal, quantidade) {}
+  /** @param {string} animal
+   * @param {number} quantidade
+   * @returns {Object}
+   */
+
+  analisaRecintos(animal, quantidade) {
+    if (quantidade < 1) {
+      return {
+        erro: "Quantidade inválida",
+      };
+    }
+    /** @type {Especie} */
+    const especie = Especie.especies[animal];
+    if (!especie) {
+      return {
+        erro: "Animal inválido",
+      };
+    }
+    let recintosViaveis = [];
+    for (let i = 1; i <= 5; ++i) {
+      const recinto = this.recintos.get(i);
+      if (recinto?.adicionarAnimal(especie, quantidade)) {
+        recintosViaveis.push(
+          `Recinto ${i} (espaço livre: ${recinto.tamanhoLivre()} total: ${recinto.tamanhoTotal()})`,
+        );
+      }
+    }
+    if (recintosViaveis.length == 0) {
+      return {
+        erro: "Não há recinto viável",
+      };
+    }
+    return {
+      recintosViaveis: recintosViaveis,
+    };
+  }
 }
 
 export { RecintosZoo as RecintosZoo };
